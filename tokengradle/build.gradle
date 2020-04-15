@@ -62,6 +62,12 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+//    compile fileTree(include: ['contracts-0.1.jar'], dir: 'libs')
+//    compile fileTree(include: ['corda.jar'], dir: 'libs')
+//    compile fileTree(include: ['tokens-contracts-1.0.jar'], dir: 'libs')
+//    compile fileTree(include: ['tokens-money-1.0.jar'], dir: 'libs')
+//    compile fileTree(include: ['tokens-workflows-1.0.jar'], dir: 'libs')
 
     //compile "$corda_release_group:corda-rpc:$corda_release_version"
     //cordaCompile "net.corda:corda-rpc:$corda_release_version"
@@ -82,9 +88,8 @@ dependencies {
 
     cordaRuntime "net.corda:corda:$corda_release_version"
     cordaRuntime "net.corda:corda-node-api:$corda_release_version"
-    testCompile "net.corda:corda-node-driver:$corda_release_version"
+    //testCompile "net.corda:corda-node-driver:$corda_release_version"
     testCompile "net.corda:corda-test-utils:$corda_release_version"
-
 
 
 
