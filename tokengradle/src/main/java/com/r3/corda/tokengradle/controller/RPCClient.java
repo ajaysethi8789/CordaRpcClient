@@ -108,6 +108,41 @@ public class RPCClient {
         return cs;
 
     }
+    
+     @RequestMapping(value ="/vaultQuery/{accountid}", method=RequestMethod.GET)
+    public List<StateAndRef<AccountState>> vaultQuery(@PathVariable("accountid") String accountid) throws Exception{
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10006");
+        String username = "user1";
+        String password = "test";
+
+        final CordaRPCClient client = new CordaRPCClient(nodeAddress);
+        final CordaRPCConnection connection = client.start(username, password);
+        final CordaRPCOps proxy = connection.getProxy();
+
+        QueryCriteria generalCriteria = new VaultQueryCriteria(Vault.StateStatus.ALL);
+//        val field = entityClass.declaredField<Any>(AccountSchemaV1.PersistentAccount.class, "accountId")
+
+            FieldInfo attributeAccount = QueryCriteriaUtils.getField("accountId", AccountSchemaV1.PersistentAccount.class);
+
+
+            CriteriaExpression accountIdCriteria = Builder.equal(attributeAccount, accountid);
+            QueryCriteria customCriteria = new VaultCustomQueryCriteria(accountIdCriteria);
+            QueryCriteria criteria = generalCriteria.and(customCriteria);
+            //hit the node to get snapshot and observable for IOUState
+            DataFeed<Vault.Page<AccountState>, Vault.Update<AccountState>> dataFeed = proxy.vaultTrackByCriteria(AccountState.class, criteria);
+
+            //this gives a snapshot of IOUState as of now. so if there are 11 IOUState as of now, this will return 11 IOUState objects
+            Vault.Page<AccountState> snapshot = dataFeed.getSnapshot();
+
+            //this returns an observable on IOUState
+//        Observable<Vault.Update<AccountState>> updates = dataFeed.getUpdates();
+
+            // call a method for each IOUState
+            return snapshot.getStates();
+
+
+
+    }
 
     private static void actionToPerform(StateAndRef<CreateAssetState> state) {
         System.out.println("{}"+ state.getState().getData());
